@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<country car_code="CAT">
+    <name>Catalonia</name>
+    <population_growth>0.8</population_growth>
+    <infant_mortality>2.5</infant_mortality>
+
+    <gdp>
+        <total>204189</total>
+        <agri>3</agri>
+        <ind>37</ind>
+        <serv>60</serv>
+    </gdp>
+
+    <inflation>1.5</inflation>
+    <unemployment>12.6</unemployment>
+
+    <indep_date from="E">2024-04-01</indep_date>
+
+    <ethnicgroups>
+        <ethnicgroup percentage="84">Spanish</ethnicgroup>
+        <ethnicgroup percentage="5">Mestizo</ethnicgroup>
+        <ethnicgroup percentage="2">Arab</ethnicgroup>
+        <ethnicgroup percentage="1">Roma</ethnicgroup>
+    </ethnicgroups>
+
+    <religions>
+        <religion percentage="53.0">Catholic</religion>
+        <religion percentage="7.0">Protestant</religion>
+        <religion percentage="4.3">Muslim</religion>
+        <religion percentage="1.3">Christian Orthodox</religion>
+        <religion percentage="1.0">Jehovas Witnesses</religion>
+    </religions>
+
+    <languages>
+        <language percentage="48.6">Spanish</language>
+        <language percentage="36.1">Catalan</language>
+        <language percentage="0.9">Arabic</language>
+        <language percentage="0.4">English</language>
+        <language percentage="0.4">Romanian</language>
+        <language percentage="0.3">Berber</language>
+        <language percentage="0.2">Occitan</language>
+    </languages>
+
+    <borders>
+        <border country="AND" length="65"/>
+        <border country="F" length="300"/>
+        <border country="E" length="320"/>
+    </borders>
+</country>
