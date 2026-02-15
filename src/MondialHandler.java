@@ -16,7 +16,6 @@ public class MondialHandler extends DefaultHandler {
     private final CountryData newCountryData;
 
     private boolean inParentCountry = false;
-    private final List<String> parentOrganizations = new ArrayList<>();
     private String parentMemberships = null; // store memberships attribute
     private int depth = 0; // XML indentation
 
@@ -111,11 +110,6 @@ public class MondialHandler extends DefaultHandler {
             return;
         }
 
-        // Track organizations in parent country
-        if (inParentCountry && "organization".equals(qName)) {
-            parentOrganizations.add(text.toString().trim());
-        }
-
         // Normal element
         writeText(text.toString());
         writeEnd(qName);
@@ -195,11 +189,6 @@ public class MondialHandler extends DefaultHandler {
 
             // Write new country data
             newCountryData.writeCountryData(out);
-
-            // Copy organizations from parent
-            for (String org : parentOrganizations) {
-                out.write("\n" + "    ".repeat(depth) + "<organization>" + org + "</organization>");
-            }
 
             depth--;
             out.write("\n" + "    ".repeat(depth) + "</country>");

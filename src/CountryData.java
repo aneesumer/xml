@@ -28,30 +28,100 @@ public class CountryData {
     }
 
     public static CountryData load(String file) throws Exception {
-        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-        DocumentBuilder b = f.newDocumentBuilder();
-        Document doc = b.parse(new File(file));
-        return new CountryData(doc.getDocumentElement());
+        DocumentBuilderFactory factory =
+                DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder =
+                factory.newDocumentBuilder();
+        Document document =
+                builder.parse(new File(file));
+
+        Node root = document.getDocumentElement();
+
+        flattenDom(root);
+
+        return new CountryData(root);
     }
 
     public void writeCountryData(Writer out) throws IOException {
         NodeList children = countryNode.getChildNodes();
+
         for (int i = 0; i < children.getLength(); i++) {
             Node n = children.item(i);
+
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 out.write(nodeToString(n));
             }
         }
     }
 
+    private static void flattenDom(Node node) {
+        NodeList children = node.getChildNodes();
+
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                flattenDom(child);
+            }
+        }
+
+        // Do not unwrap document root
+        if (node.getParentNode() == null ||
+                node.getParentNode().getNodeType() ==
+                        Node.DOCUMENT_NODE) {
+            return;
+        }
+
+        // Only unwrap elements that contain element children
+        boolean hasElementChildren = false;
+        NodeList nodeChildren = node.getChildNodes();
+
+        for (int i = 0; i < nodeChildren.getLength(); i++) {
+            if (nodeChildren.item(i).getNodeType() ==
+                    Node.ELEMENT_NODE) {
+                hasElementChildren = true;
+                break;
+            }
+        }
+
+        if (!hasElementChildren) {
+            return;
+        }
+
+        Node parent = node.getParentNode();
+        Node nextSibling = node.getNextSibling();
+
+        while (node.hasChildNodes()) {
+            Node child = node.getFirstChild();
+            node.removeChild(child);
+            parent.insertBefore(child, nextSibling);
+        }
+
+        parent.removeChild(node);
+    }
+
     private String nodeToString(Node node) throws IOException {
         try {
             StringWriter sw = new StringWriter();
-            Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            t.setOutputProperty(OutputKeys.INDENT, "yes");
-            t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            t.transform(new DOMSource(node), new StreamResult(sw));
+            Transformer transformer =
+                    TransformerFactory
+                            .newInstance()
+                            .newTransformer();
+
+            transformer.setOutputProperty(
+                    OutputKeys.OMIT_XML_DECLARATION,
+                    "yes");
+            transformer.setOutputProperty(
+                    OutputKeys.INDENT,
+                    "yes");
+            transformer.setOutputProperty(
+                    "{http://xml.apache.org/xslt}indent-amount",
+                    "4");
+
+            transformer.transform(
+                    new DOMSource(node),
+                    new StreamResult(sw));
+
             return sw.toString();
         } catch (Exception e) {
             throw new IOException(e);

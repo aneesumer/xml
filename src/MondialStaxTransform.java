@@ -46,8 +46,6 @@ public class MondialStaxTransform {
             boolean inParentCountry = false;
             boolean inProvince = false;
             boolean skipProvince = false;
-
-            List<String> parentOrganizations = new ArrayList<>();
             String parentMemberships = null;
 
             List<XMLEvent> provinceBuffer = new ArrayList<>();
@@ -82,13 +80,6 @@ public class MondialStaxTransform {
                     if (inProvince) {
                         provinceBuffer.add(event);
                         continue;
-                    }
-
-                    // Track organizations in parent
-                    if (inParentCountry && "organization".equals(name)) {
-                        String orgText = reader.getElementText().trim();
-                        parentOrganizations.add(orgText);
-                        continue; // skip writing now
                     }
 
                     // Normal write
@@ -137,13 +128,6 @@ public class MondialStaxTransform {
 
                         // Write new country content from DOM
                         writeNodeChildrenStax(newCountry.getRootNode(), xmlWriter, eventFactory);
-
-                        // Write parent organizations
-                        for (String org : parentOrganizations) {
-                            xmlWriter.add(eventFactory.createStartElement("", "", "organization"));
-                            xmlWriter.add(eventFactory.createCharacters(escapeXml(org)));
-                            xmlWriter.add(eventFactory.createEndElement("", "", "organization"));
-                        }
 
                         xmlWriter.add(eventFactory.createEndElement("", "", "country"));
                         continue;
